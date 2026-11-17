@@ -83,8 +83,9 @@ def clean_data(df):
 
 df = clean_data(df)
 
-# Create a new column 'Product Cost' based on the formula: Product Cost = Sales - (Sales * Discount) - Profit
-df['Product Cost'] = (df['Sales']-(df['Sales']*df['Discount'])) - df['Profit']
+# Create a new column 'Product Cost'
+# Product Cost = Sales - Profit
+df['Product Cost'] = df['Sales'] - df['Profit']
 
 # Save the cleaned data to a new CSV file
 df.to_csv('cleaned_sample_superstore.csv', index=False)
