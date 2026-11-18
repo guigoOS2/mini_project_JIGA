@@ -1,0 +1,7 @@
+scenario,volume_lost_pct,profit,gain
+Current,0.0,292296.8146,0.0
+"Cap at 20%, 0% of deep-discount sales lost",0.0,512511.38518095243,220214.57058095245
+"Cap at 20%, 25% of deep-discount sales lost",25.0,491462.9139857143,199166.09938571433
+"Cap at 20%, 50% of deep-discount sales lost",50.0,470414.44279047626,178117.62819047627
+"Cap at 20%, 75% of deep-discount sales lost",75.0,449365.97159523814,157069.15699523815
+"Cap at 20%, 100% of deep-discount sales lost",100.0,428317.5004,136020.68580000004
