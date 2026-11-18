@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from utils import DISCOUNT_LABELS, HIGH_DISCOUNT, OUTPUT_ROOT, load_data, save_table, logger
+from src.utils import DISCOUNT_LABELS, HIGH_DISCOUNT, OUTPUT_ROOT, load_data, save_table, logger
 
 
 # Configuration
@@ -180,6 +180,22 @@ def independence_check(df: pd.DataFrame, drivers: list) -> pd.DataFrame:
     return t
 
 
+def state_subcategory_discount_analysis(df: pd.DataFrame) -> pd.DataFrame:
+    """Gross loss breakdown by State/Province, Sub-Category, and Discount Band."""
+    g = df.groupby(["State/Province", "Sub-Category", "Discount Range"], observed=True)
+    t = g.agg(
+        rows=("Order ID", "size"),
+        sales=("Sales", "sum"),
+        profit=("Profit", "sum"),
+        gross_loss=("loss", "sum"),
+        loss_rows=("is_loss", "sum"),
+    )
+    t["margin_pct"] = t["profit"] / t["sales"] * 100
+    t = t.sort_values("gross_loss")
+    save(t, "tbl_09_state_subcategory_discount")
+    return t
+
+
 # Uncertainty
 def bootstrap_drivers(df: pd.DataFrame, drivers: list) -> pd.DataFrame:
     """95% intervals using a cluster bootstrap by Order ID.
@@ -348,6 +364,19 @@ def plot_overlap(overlap: pd.DataFrame) -> None:
     plt.close(fig)
 
 
+def plot_state_subcategory_discount(table: pd.DataFrame, top: int = 15) -> None:
+    t = table.head(top).iloc[::-1]
+    labels = [f"{state} | {sub} | {band}" for (state, sub, band) in t.index]
+
+    fig, ax = plt.subplots(figsize=(10, 5.5))
+    ax.barh(labels, -t["gross_loss"], color=HOT_COLOR)
+    ax.set_xlabel("Gross loss ($)")
+    ax.set_title(f"Top {top} Loss Drivers: State × Sub-Category × Discount Band")
+    fig.tight_layout()
+    fig.savefig(OUTPUT_DIR / "fig_08_state_subcategory_discount.png", dpi=130)
+    plt.close(fig)
+
+
 def plot_ci(ci: pd.DataFrame) -> None:
     fig, ax = plt.subplots(figsize=(10, 3.8))
     y = np.arange(len(ci))[::-1]
@@ -391,6 +420,7 @@ def main() -> None:
     drivers = build_drivers(df, ranking)
     overlap = overlap_table(df, drivers)
     indep = independence_check(df, drivers)
+    state_sub_disc = state_subcategory_discount_analysis(df)
     ci = bootstrap_drivers(df, drivers)
     sens = threshold_sensitivity(df)
     scen = discount_cap_scenario(df)
@@ -403,6 +433,7 @@ def main() -> None:
             plot_pareto(d, f"fig_0{pareto_n}_pareto_{d['column'].lower().replace('/', '_').replace('-', '_')}.png")
             pareto_n += 1
     plot_overlap(overlap)
+    plot_state_subcategory_discount(state_sub_disc)
     plot_ci(ci)
     plot_scenarios(scen)
 
