@@ -4,7 +4,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from utils import OUTPUT_ROOT, load_data, save_table
+from utils import OUTPUT_ROOT, load_data, save_table, logger
 
 # Configuration
 OUTPUT_DIR = OUTPUT_ROOT / "profit_by_segment"
@@ -172,7 +172,7 @@ def main() -> None:
     worst_performers(df)
     plot_all(seg, dims, time_res)
 
-    print(f"\nGraphs and CSV tables saved to: {OUTPUT_DIR}")
+    logger.info("Graphs and CSV tables saved to: %s", OUTPUT_DIR)
 
 
 if __name__ == "__main__":

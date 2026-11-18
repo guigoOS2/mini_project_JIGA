@@ -1,4 +1,7 @@
+import logging
+import sys
 from pathlib import Path
+
 import pandas as pd
 
 # Paths (change the folder or file names here and every script follows)
@@ -7,6 +10,7 @@ DATA_DIR = BASE_DIR / "DATA"
 RAW_FILE = DATA_DIR / "sample_-_superstore.csv"
 CLEAN_FILE = DATA_DIR / "cleaned_sample_superstore.csv"
 OUTPUT_ROOT = BASE_DIR / "output"  # each script saves in its own subfolder
+LOG_FILE = OUTPUT_ROOT / "logs" / "pipeline.log"
 
 # Shared analysis settings
 HIGH_DISCOUNT = 0.20  # discount above this value is considered "deep"
@@ -17,13 +21,53 @@ DISCOUNT_BINS = [-0.001, 0, HIGH_DISCOUNT, 2 * HIGH_DISCOUNT, 1.0]
 DISCOUNT_LABELS = ["0%", f"1-{_pct}%", f"{_pct + 1}-{2 * _pct}%", f">{2 * _pct}%"]
 
 
+# Logging
+def setup_logger() -> logging.Logger:
+    """One shared logger: INFO and above on the terminal, everything in the log file."""
+    logger = logging.getLogger("pipeline")
+    if logger.handlers:  # already configured
+        return logger
+
+    logger.setLevel(logging.DEBUG)
+    logger.propagate = False  # avoids duplicate lines if another library configures the root logger
+    formatter = logging.Formatter(
+        "%(asctime)s | %(levelname)-8s | %(module)-18s | %(message)s", "%Y-%m-%d %H:%M:%S"
+    )
+
+    console = logging.StreamHandler(sys.stdout)
+    console.setLevel(logging.INFO)
+    console.setFormatter(formatter)
+    logger.addHandler(console)
+
+    LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+    file_handler = logging.FileHandler(LOG_FILE, encoding="utf-8")
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+    return logger
+
+
+logger = setup_logger()
+
+
+def _log_uncaught(exc_type, exc_value, exc_tb) -> None:
+    """Send crashes to the log too (terminal and file), not only to the terminal."""
+    if issubclass(exc_type, KeyboardInterrupt):
+        sys.__excepthook__(exc_type, exc_value, exc_tb)
+        return
+    logger.critical("Uncaught exception in %s", Path(sys.argv[0]).name, exc_info=(exc_type, exc_value, exc_tb))
+
+
+sys.excepthook = _log_uncaught
+
+
 # Loading
 def load_data() -> pd.DataFrame:
     """Load the cleaned dataset and add the columns used by more than one script."""
     if not CLEAN_FILE.exists():
         raise FileNotFoundError(f"Put '{CLEAN_FILE.name}' in: {DATA_DIR}")
 
-    print(f"Loading data: {CLEAN_FILE}")
+    logger.info("Loading data: %s", CLEAN_FILE)
     df = pd.read_csv(CLEAN_FILE, parse_dates=["Order Date", "Ship Date"])
 
     # derived columns created from existing columns

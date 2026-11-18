@@ -1,7 +1,7 @@
 from functools import partial
 import pandas as pd
 
-from utils import OUTPUT_ROOT, load_data, save_table
+from utils import OUTPUT_ROOT, load_data, save_table, logger
 
 # Configuration
 OUTPUT_DIR = OUTPUT_ROOT / "dashboard_tables"
@@ -62,7 +62,7 @@ def main() -> None:
     page_2_products(df)
     page_3_discounts(df)
 
-    print(f"\nCSV tables saved to: {OUTPUT_DIR}")
+    logger.info("CSV tables saved to: %s", OUTPUT_DIR)
 
 
 if __name__ == "__main__":

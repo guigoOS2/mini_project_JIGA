@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from utils import DISCOUNT_LABELS, HIGH_DISCOUNT, OUTPUT_ROOT, load_data, save_table
+from utils import DISCOUNT_LABELS, HIGH_DISCOUNT, OUTPUT_ROOT, load_data, save_table, logger
 
 
 # Configuration
@@ -406,7 +406,7 @@ def main() -> None:
     plot_ci(ci)
     plot_scenarios(scen)
 
-    print(f"\nGraphs and CSV tables saved to: {OUTPUT_DIR}")
+    logger.info("Graphs and CSV tables saved to: %s", OUTPUT_DIR)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 import pandas as pd
 
-from utils import CLEAN_FILE, DATA_DIR, RAW_FILE
+from utils import CLEAN_FILE, DATA_DIR, RAW_FILE, logger
 
 # Configuration
 DATE_COLUMNS = ["Order Date", "Ship Date"]
@@ -11,7 +11,7 @@ def load_raw_data() -> pd.DataFrame:
     if not RAW_FILE.exists():
         raise FileNotFoundError(f"Put '{RAW_FILE.name}' in: {DATA_DIR}")
 
-    print(f"Loading data: {RAW_FILE}")
+    logger.info("Loading raw data: %s", RAW_FILE)
     # Postal Code as text to keep leading zeros and Canadian codes (e.g. M5V)
     return pd.read_csv(RAW_FILE, dtype={"Postal Code": str})
 
@@ -53,16 +53,12 @@ def quality_check(df: pd.DataFrame, title: str = "") -> dict:
         "issues": issues,
     }
 
-    print(f"\nData quality summary {title}".rstrip())
-    print(f"Rows: {summary['rows']}")
-    print(f"Columns: {summary['columns']}")
-    print(f"Duplicate rows: {summary['duplicates']}")
-    print("Missing values:", summary["missing"] or "None")
-    print("Data types:")
-    print(dtypes.to_string())
-    print("Documented issues:")
+    logger.info("Data quality summary %s", title)
+    logger.info("Rows: %s | Columns: %s", summary["rows"], summary["columns"])
+    logger.debug("Data types:\n%s", dtypes.to_string())
     for issue in issues:
-        print(f"- {issue}")
+        log = logger.info if issue.startswith("No ") else logger.warning
+        log(issue)
 
     return summary
 
@@ -108,7 +104,7 @@ def add_columns(df: pd.DataFrame) -> pd.DataFrame:
 # Saving
 def save_data(df: pd.DataFrame) -> None:
     df.to_csv(CLEAN_FILE, index=False)
-    print(f"\nCleaned data saved to: {CLEAN_FILE}")
+    logger.info("Cleaned data saved to: %s", CLEAN_FILE)
 
 
 # Main

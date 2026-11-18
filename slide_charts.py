@@ -6,7 +6,7 @@ import pandas as pd
 from matplotlib.patches import FancyBboxPatch
 from matplotlib.ticker import FuncFormatter
 
-from utils import HIGH_DISCOUNT, OUTPUT_ROOT, load_data, money
+from utils import HIGH_DISCOUNT, OUTPUT_ROOT, load_data, money, logger
 
 # Configuration
 OUTPUT_DIR = OUTPUT_ROOT / "slides_charts"
@@ -166,7 +166,7 @@ def main() -> None:
     chart_sub_category_profit(df, source)
     chart_state_profit(df, source)
 
-    print(f"\nSlide charts saved to: {OUTPUT_DIR}")
+    logger.info("Slide charts saved to: %s", OUTPUT_DIR)
 
 
 if __name__ == "__main__":

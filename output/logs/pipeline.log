@@ -1,0 +1,150 @@
+2026-11-18 05:19:26 | INFO     | run_pipeline       | [1/5] Running etl.py
+2026-11-18 05:19:27 | INFO     | etl                | Loading raw data: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\DATA\sample_-_superstore.csv
+2026-11-18 05:19:28 | INFO     | etl                | Data quality summary (before cleaning)
+2026-11-18 05:19:28 | INFO     | etl                | Rows: 10194 | Columns: 21
+2026-11-18 05:19:28 | DEBUG    | etl                | Data types:
+Row ID              int64
+Order ID           object
+Order Date         object
+Ship Date          object
+Ship Mode          object
+Customer ID        object
+Customer Name      object
+Segment            object
+Country/Region     object
+City               object
+State/Province     object
+Postal Code        object
+Region             object
+Product ID         object
+Category           object
+Sub-Category       object
+Product Name       object
+Sales             float64
+Quantity            int64
+Discount          float64
+Profit            float64
+2026-11-18 05:19:28 | INFO     | etl                | No missing values detected.
+2026-11-18 05:19:28 | INFO     | etl                | No duplicate rows detected.
+2026-11-18 05:19:28 | WARNING  | etl                | Date columns require conversion: Order Date, Ship Date
+2026-11-18 05:19:28 | INFO     | etl                | Data quality summary (after cleaning)
+2026-11-18 05:19:28 | INFO     | etl                | Rows: 10194 | Columns: 22
+2026-11-18 05:19:28 | DEBUG    | etl                | Data types:
+Row ID                     int64
+Order ID                  object
+Order Date        datetime64[ns]
+Ship Date         datetime64[ns]
+Ship Mode                 object
+Customer ID               object
+Customer Name             object
+Segment                   object
+Country/Region            object
+City                      object
+State/Province            object
+Postal Code               object
+Region                    object
+Product ID                object
+Category                  object
+Sub-Category              object
+Product Name              object
+Sales                    float64
+Quantity                   int64
+Discount                 float64
+Profit                   float64
+Product Cost             float64
+2026-11-18 05:19:28 | INFO     | etl                | No missing values detected.
+2026-11-18 05:19:28 | INFO     | etl                | No duplicate rows detected.
+2026-11-18 05:19:28 | INFO     | etl                | Cleaned data saved to: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\DATA\cleaned_sample_superstore.csv
+2026-11-18 05:19:28 | INFO     | run_pipeline       | etl.py finished in 2.7s
+2026-11-18 05:19:28 | INFO     | run_pipeline       | [2/5] Running profit_by_segment.py
+2026-11-18 05:19:33 | INFO     | utils              | Loading data: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\DATA\cleaned_sample_superstore.csv
+2026-11-18 05:19:37 | INFO     | profit_by_segment  | Graphs and CSV tables saved to: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\output\profit_by_segment
+2026-11-18 05:19:37 | INFO     | run_pipeline       | profit_by_segment.py finished in 9.0s
+2026-11-18 05:19:37 | INFO     | run_pipeline       | [3/5] Running loss_drivers.py
+2026-11-18 05:19:40 | INFO     | utils              | Loading data: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\DATA\cleaned_sample_superstore.csv
+2026-11-18 05:19:46 | INFO     | loss_drivers       | Graphs and CSV tables saved to: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\output\loss_drivers
+2026-11-18 05:19:46 | INFO     | run_pipeline       | loss_drivers.py finished in 8.9s
+2026-11-18 05:19:46 | INFO     | run_pipeline       | [4/5] Running dashboard_tables.py
+2026-11-18 05:19:48 | INFO     | utils              | Loading data: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\DATA\cleaned_sample_superstore.csv
+2026-11-18 05:19:48 | INFO     | dashboard_tables   | CSV tables saved to: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\output\dashboard_tables
+2026-11-18 05:19:48 | INFO     | run_pipeline       | dashboard_tables.py finished in 2.3s
+2026-11-18 05:19:48 | INFO     | run_pipeline       | [5/5] Running slide_charts.py
+2026-11-18 05:19:51 | INFO     | utils              | Loading data: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\DATA\cleaned_sample_superstore.csv
+2026-11-18 05:19:53 | INFO     | slide_charts       | Slide charts saved to: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\output\slides_charts
+2026-11-18 05:19:53 | INFO     | run_pipeline       | slide_charts.py finished in 5.0s
+2026-11-18 05:19:53 | INFO     | run_pipeline       | Pipeline finished: 5 steps in 27.9s
+2026-11-18 05:21:59 | INFO     | run_pipeline       | [1/5] Running etl.py
+2026-11-18 05:22:00 | INFO     | etl                | Loading raw data: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\DATA\sample_-_superstore.csv
+2026-11-18 05:22:00 | INFO     | etl                | Data quality summary (before cleaning)
+2026-11-18 05:22:00 | INFO     | etl                | Rows: 10194 | Columns: 21
+2026-11-18 05:22:00 | DEBUG    | etl                | Data types:
+Row ID              int64
+Order ID           object
+Order Date         object
+Ship Date          object
+Ship Mode          object
+Customer ID        object
+Customer Name      object
+Segment            object
+Country/Region     object
+City               object
+State/Province     object
+Postal Code        object
+Region             object
+Product ID         object
+Category           object
+Sub-Category       object
+Product Name       object
+Sales             float64
+Quantity            int64
+Discount          float64
+Profit            float64
+2026-11-18 05:22:00 | INFO     | etl                | No missing values detected.
+2026-11-18 05:22:00 | INFO     | etl                | No duplicate rows detected.
+2026-11-18 05:22:00 | WARNING  | etl                | Date columns require conversion: Order Date, Ship Date
+2026-11-18 05:22:01 | INFO     | etl                | Data quality summary (after cleaning)
+2026-11-18 05:22:01 | INFO     | etl                | Rows: 10194 | Columns: 22
+2026-11-18 05:22:01 | DEBUG    | etl                | Data types:
+Row ID                     int64
+Order ID                  object
+Order Date        datetime64[ns]
+Ship Date         datetime64[ns]
+Ship Mode                 object
+Customer ID               object
+Customer Name             object
+Segment                   object
+Country/Region            object
+City                      object
+State/Province            object
+Postal Code               object
+Region                    object
+Product ID                object
+Category                  object
+Sub-Category              object
+Product Name              object
+Sales                    float64
+Quantity                   int64
+Discount                 float64
+Profit                   float64
+Product Cost             float64
+2026-11-18 05:22:01 | INFO     | etl                | No missing values detected.
+2026-11-18 05:22:01 | INFO     | etl                | No duplicate rows detected.
+2026-11-18 05:22:01 | INFO     | etl                | Cleaned data saved to: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\DATA\cleaned_sample_superstore.csv
+2026-11-18 05:22:01 | INFO     | run_pipeline       | etl.py finished in 2.0s
+2026-11-18 05:22:01 | INFO     | run_pipeline       | [2/5] Running profit_by_segment.py
+2026-11-18 05:22:04 | INFO     | utils              | Loading data: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\DATA\cleaned_sample_superstore.csv
+2026-11-18 05:22:08 | INFO     | profit_by_segment  | Graphs and CSV tables saved to: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\output\profit_by_segment
+2026-11-18 05:22:08 | INFO     | run_pipeline       | profit_by_segment.py finished in 7.2s
+2026-11-18 05:22:08 | INFO     | run_pipeline       | [3/5] Running loss_drivers.py
+2026-11-18 05:22:12 | INFO     | utils              | Loading data: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\DATA\cleaned_sample_superstore.csv
+2026-11-18 05:22:20 | INFO     | loss_drivers       | Graphs and CSV tables saved to: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\output\loss_drivers
+2026-11-18 05:22:20 | INFO     | run_pipeline       | loss_drivers.py finished in 12.3s
+2026-11-18 05:22:20 | INFO     | run_pipeline       | [4/5] Running dashboard_tables.py
+2026-11-18 05:22:23 | INFO     | utils              | Loading data: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\DATA\cleaned_sample_superstore.csv
+2026-11-18 05:22:23 | INFO     | dashboard_tables   | CSV tables saved to: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\output\dashboard_tables
+2026-11-18 05:22:23 | INFO     | run_pipeline       | dashboard_tables.py finished in 2.8s
+2026-11-18 05:22:23 | INFO     | run_pipeline       | [5/5] Running slide_charts.py
+2026-11-18 05:22:26 | INFO     | utils              | Loading data: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\DATA\cleaned_sample_superstore.csv
+2026-11-18 05:22:30 | INFO     | slide_charts       | Slide charts saved to: C:\Users\italo\OneDrive\Documentos\MasterDataScience\Object-Oriented Programming in Python\miniproject\output\slides_charts
+2026-11-18 05:22:31 | INFO     | run_pipeline       | slide_charts.py finished in 7.4s
+2026-11-18 05:22:31 | INFO     | run_pipeline       | Pipeline finished: 5 steps in 31.8s

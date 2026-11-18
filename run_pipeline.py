@@ -3,7 +3,7 @@ import sys
 import time
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent
+from utils import logger, BASE_DIR
 
 # Scripts in dependency order
 STEPS = [
@@ -19,20 +19,22 @@ def main() -> None:
     # check everything exists before running anything
     missing = [s for s in STEPS if not (BASE_DIR / s).exists()]
     if missing:
-        sys.exit(f"Missing script(s) in {BASE_DIR}: {', '.join(missing)}")
+        logger.error("Missing script(s) in %s: %s", BASE_DIR, ", ".join(missing))
+        sys.exit(1)
 
     start = time.time()
     for i, script in enumerate(STEPS, start=1):
-        print(f"\n[{i}/{len(STEPS)}] Running {script}")
+        logger.info("[%d/%d] Running %s", i, len(STEPS), script)
         step_start = time.time()
 
         result = subprocess.run([sys.executable, str(BASE_DIR / script)], cwd=BASE_DIR)
         if result.returncode != 0:
-            sys.exit(f"\nPipeline stopped: {script} failed (exit code {result.returncode}).")
+            logger.error("Pipeline stopped: %s failed (exit code %d)", script, result.returncode)
+            sys.exit(1)
 
-        print(f"Done in {time.time() - step_start:.1f}s")
+        logger.info("%s finished in %.1fs", script, time.time() - step_start)
 
-    print(f"\nPipeline finished: {len(STEPS)} steps in {time.time() - start:.1f}s")
+    logger.info("Pipeline finished: %d steps in %.1fs", len(STEPS), time.time() - start)
 
 
 if __name__ == "__main__":
