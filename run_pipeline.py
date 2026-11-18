@@ -3,9 +3,12 @@ import sys
 import time
 from pathlib import Path
 
-from utils import logger, BASE_DIR
+from src.utils import logger
 
-# Scripts in dependency order
+BASE_DIR = Path(__file__).resolve().parent
+SRC_DIR = BASE_DIR / "src"
+
+# Scripts inside src/ in dependency order
 STEPS = [
     "etl.py",                   # raw data -> cleaned CSV
     "profit_by_segment.py",
@@ -17,9 +20,9 @@ STEPS = [
 
 def main() -> None:
     # check everything exists before running anything
-    missing = [s for s in STEPS if not (BASE_DIR / s).exists()]
+    missing = [s for s in STEPS if not (SRC_DIR / s).exists()]
     if missing:
-        logger.error("Missing script(s) in %s: %s", BASE_DIR, ", ".join(missing))
+        logger.error("Missing script(s) in %s: %s", SRC_DIR, ", ".join(missing))
         sys.exit(1)
 
     start = time.time()
@@ -27,7 +30,9 @@ def main() -> None:
         logger.info("[%d/%d] Running %s", i, len(STEPS), script)
         step_start = time.time()
 
-        result = subprocess.run([sys.executable, str(BASE_DIR / script)], cwd=BASE_DIR)
+        # run as a module (python -m src.etl) so the "src." imports work
+        module = f"src.{Path(script).stem}"
+        result = subprocess.run([sys.executable, "-m", module], cwd=BASE_DIR)
         if result.returncode != 0:
             logger.error("Pipeline stopped: %s failed (exit code %d)", script, result.returncode)
             sys.exit(1)
