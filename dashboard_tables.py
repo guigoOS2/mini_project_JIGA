@@ -1,30 +1,11 @@
-from pathlib import Path
+from functools import partial
 import pandas as pd
 
+from utils import OUTPUT_ROOT, load_data, save_table
+
 # Configuration
-BASE_DIR = Path(__file__).resolve().parent
-DATA_DIR = BASE_DIR / "DATA"
-DATA_FILE = DATA_DIR / "cleaned_sample_superstore.csv"
-OUTPUT_DIR = BASE_DIR / "output" / "dashboard_tables"
-
-
-# Loading
-def load_data() -> pd.DataFrame:
-    if not DATA_FILE.exists():
-        raise FileNotFoundError(f"Put '{DATA_FILE.name}' in: {DATA_DIR}")
-
-    print(f"Loading data: {DATA_FILE}")
-    df = pd.read_csv(DATA_FILE, parse_dates=["Order Date"])
-
-    # derived columns created from existing columns
-    df["YearMonth"] = df["Order Date"].dt.to_period("M").astype(str)
-    # same discount ranges used in T6 and T7
-    df["Discount Range"] = pd.cut(
-        df["Discount"],
-        bins=[-0.001, 0, 0.2, 0.4, 1.0],
-        labels=["0%", "1-20%", "21-40%", ">40%"],
-    )
-    return df
+OUTPUT_DIR = OUTPUT_ROOT / "dashboard_tables"
+save = partial(save_table, output_dir=OUTPUT_DIR, decimals=2)
 
 
 # Metrics
@@ -36,10 +17,6 @@ def summarize(df: pd.DataFrame, by: str) -> pd.DataFrame:
     )
     out["profit_margin_pct"] = out["total_profit"] / out["total_sales"] * 100
     return out
-
-
-def save(table: pd.DataFrame, name: str, index: bool = True) -> None:
-    table.round(2).to_csv(OUTPUT_DIR / f"{name}.csv", index=index)
 
 
 # Dashboard items

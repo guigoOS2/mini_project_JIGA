@@ -1,17 +1,13 @@
-from pathlib import Path
 import pandas as pd
 
-# Configuration
-BASE_DIR = Path(__file__).resolve().parent
-DATA_DIR = BASE_DIR / "DATA"
-RAW_FILE = DATA_DIR / "sample_-_superstore.csv"
-CLEAN_FILE = DATA_DIR / "cleaned_sample_superstore.csv"
+from utils import CLEAN_FILE, DATA_DIR, RAW_FILE
 
+# Configuration
 DATE_COLUMNS = ["Order Date", "Ship Date"]
 
 
 # Loading
-def load_data() -> pd.DataFrame:
+def load_raw_data() -> pd.DataFrame:
     if not RAW_FILE.exists():
         raise FileNotFoundError(f"Put '{RAW_FILE.name}' in: {DATA_DIR}")
 
@@ -117,7 +113,7 @@ def save_data(df: pd.DataFrame) -> None:
 
 # Main
 def main() -> None:
-    df = load_data()
+    df = load_raw_data()
     quality_check(df, "(before cleaning)")
 
     df = clean_data(df)

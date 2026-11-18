@@ -1,17 +1,16 @@
-from pathlib import Path
+from functools import partial
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-# Configuration
-BASE_DIR = Path(__file__).resolve().parent
-DATA_DIR = BASE_DIR / "DATA"
-DATA_FILE = DATA_DIR / "cleaned_sample_superstore.csv"
-OUTPUT_DIR = BASE_DIR / "output" / "loss_drivers"
+from utils import DISCOUNT_LABELS, HIGH_DISCOUNT, OUTPUT_ROOT, load_data, save_table
 
-HIGH_DISCOUNT = 0.20    # discount above this value is considered "deep"
+
+# Configuration
+OUTPUT_DIR = OUTPUT_ROOT / "loss_drivers"
+
 N_DRIVERS = 3           # how many drivers to report
 COVERAGE = 0.60         # "hot" groups = fewest groups that cover 60% of the gross loss
 N_BOOT = 2000           # bootstrap resamples
@@ -26,7 +25,7 @@ OTHER_COLOR = "#b0b7c0"
 # Dimensions screened as possible loss drivers.
 # High-cardinality identifiers (customer, product name) are left out on purpose.
 CANDIDATES = {
-    "Discount Band": "DiscountBand",
+    "Discount Band": "Discount Range",
     "Sub-Category": "Sub-Category",
     "State/Province": "State/Province",
     "Region": "Region",
@@ -39,28 +38,15 @@ CANDIDATES = {
 
 
 # Loading
-def load_data() -> pd.DataFrame:
-    if not DATA_FILE.exists():
-        raise FileNotFoundError(f"Put '{DATA_FILE.name}' in: {DATA_DIR}")
-
-    print(f"Loading data: {DATA_FILE}")
-    df = pd.read_csv(DATA_FILE, parse_dates=["Order Date", "Ship Date"])
-
-    # derived columns created from existing columns
-    df["Year"] = df["Order Date"].dt.year
+def add_loss_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Columns used only by this analysis."""
     df["is_loss"] = df["Profit"] < 0
-    df["loss"] = df["Profit"].clip(upper=0)  # negative profit only (0 for profitable rows)
+    df["loss"] = df["Profit"].clip(upper=0)
     df["deep_discount"] = df["Discount"] > HIGH_DISCOUNT
-    df["DiscountBand"] = pd.cut(
-        df["Discount"],
-        bins=[-0.001, 0, 0.2, 0.4, 1.0],
-        labels=["0%", "1-20%", "21-40%", ">40%"],
-    )
     return df
 
 
-def save(table: pd.DataFrame, name: str, index: bool = True) -> None:
-    table.to_csv(OUTPUT_DIR / f"{name}.csv", index=index)
+save = partial(save_table, output_dir=OUTPUT_DIR)
 
 
 # Metrics
@@ -303,7 +289,7 @@ def plot_screening(ranking: pd.DataFrame) -> None:
 
 
 def plot_discount_bands(df: pd.DataFrame) -> None:
-    t = group_table(df, "DiscountBand").reindex(["0%", "1-20%", "21-40%", ">40%"])
+    t = group_table(df, "Discount Range").reindex(DISCOUNT_LABELS)
     x = np.arange(len(t))
     fig, ax = plt.subplots(figsize=(9, 4.5))
     ax.bar(x - 0.2, t["row_share_pct"], width=0.4, label="% of rows", color=OTHER_COLOR)
@@ -399,7 +385,7 @@ def plot_scenarios(scen: pd.DataFrame) -> None:
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    df = load_data()
+    df = add_loss_columns(load_data())
     overview = loss_overview(df)
     ranking = screen_dimensions(df)
     drivers = build_drivers(df, ranking)

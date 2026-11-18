@@ -1,14 +1,14 @@
-from pathlib import Path
+from functools import partial
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from utils import OUTPUT_ROOT, load_data, save_table
+
 # Configuration
-BASE_DIR = Path(__file__).resolve().parent
-DATA_DIR = BASE_DIR / "DATA"
-DATA_FILE = DATA_DIR / "cleaned_sample_superstore.csv"
-OUTPUT_DIR = BASE_DIR / "output" / "graphs_and_tables"
+OUTPUT_DIR = OUTPUT_ROOT / "profit_by_segment"
+save = partial(save_table, output_dir=OUTPUT_DIR)
 
 SEGMENT = "Segment"
 
@@ -20,23 +20,6 @@ DIMENSIONS = {
     "sub_category": "Sub-Category",
     "channel": "Ship Mode",     # (proxy: shipping mode)
 }
-
-
-# Loading
-def load_data() -> pd.DataFrame:
-    path = DATA_FILE
-    if not DATA_FILE.exists():
-            raise FileNotFoundError(f"Put '{DATA_FILE.name}' in: {DATA_DIR}")
-    
-    print(f"Loading data: {path}")
-    df = pd.read_csv(path, parse_dates=["Order Date", "Ship Date"])
-
-    # derived columns created from existing columns
-    df["Year"] = df["Order Date"].dt.year
-    df["Quarter"] = df["Order Date"].dt.to_period("Q").astype(str)
-    df["YearMonth"] = df["Order Date"].dt.to_period("M").astype(str)
-    df["Ship Days"] = (df["Ship Date"] - df["Order Date"]).dt.days
-    return df
 
 
 # Metrics
@@ -55,10 +38,6 @@ def summarize(df: pd.DataFrame, by) -> pd.DataFrame:
     out["profit_per_order"] = out["profit"] / out["orders"]
     out["loss_rows_pct"] = g["Profit"].apply(lambda s: (s < 0).mean() * 100)
     return out
-
-
-def save(table: pd.DataFrame, name: str, index: bool = True) -> None:
-    table.to_csv(OUTPUT_DIR / f"{name}.csv", index=index)
 
 
 # Analysis
@@ -106,11 +85,7 @@ def time_analysis(df: pd.DataFrame) -> dict:
 def discount_analysis(df: pd.DataFrame) -> None:
     """Discount as a proxy for profit leakage."""
 
-    bins = [-0.001, 0, 0.2, 0.4, 1.0]
-    labels = ["Without Discount", "1-20%", "21-40%", ">40%"]
-    df = df.assign(DiscountBand=pd.cut(df["Discount"], bins=bins, labels=labels))
-
-    table = summarize(df, [SEGMENT, "DiscountBand"])
+    table = summarize(df, [SEGMENT, "Discount Range"])
     save(table, "08_segment_by_discount_band")
 
 

@@ -1,5 +1,4 @@
 import textwrap
-from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -7,13 +6,11 @@ import pandas as pd
 from matplotlib.patches import FancyBboxPatch
 from matplotlib.ticker import FuncFormatter
 
-# Configuration
-BASE_DIR = Path(__file__).resolve().parent
-DATA_DIR = BASE_DIR / "DATA"
-DATA_FILE = DATA_DIR / "cleaned_sample_superstore.csv"
-OUTPUT_DIR = BASE_DIR / "output" / "slide_charts"
+from utils import HIGH_DISCOUNT, OUTPUT_ROOT, load_data, money
 
-HIGH_DISCOUNT = 0.20     # discount above this value is considered "deep"
+# Configuration
+OUTPUT_DIR = OUTPUT_ROOT / "slides_charts"
+
 N_STATES = 10            # how many lowest-profit states to show
 FIG_SIZE = (13.33, 7.5)  # 16:9, same proportion as a slide
 DPI = 200
@@ -33,33 +30,7 @@ plt.rcParams.update({
 })
 
 
-# Loading
-def load_data() -> pd.DataFrame:
-    if not DATA_FILE.exists():
-        raise FileNotFoundError(f"Put '{DATA_FILE.name}' in: {DATA_DIR}")
-
-    print(f"Loading data: {DATA_FILE}")
-    df = pd.read_csv(DATA_FILE, parse_dates=["Order Date"])
-
-    # same discount ranges used in the other scripts
-    df["Discount Range"] = pd.cut(
-        df["Discount"],
-        bins=[-0.001, 0, 0.2, 0.4, 1.0],
-        labels=["0%", "1-20%", "21-40%", ">40%"],
-    )
-    return df
-
-
 # Helpers
-def money(value: float, decimals: int = 0) -> str:
-    """Short money format: $1,234 or $12K (negative values keep the sign)."""
-    sign = "-" if value < 0 else ""
-    v = abs(value)
-    if v >= 1000:
-        return f"{sign}${v / 1000:,.{decimals}f}K"
-    return f"{sign}${v:,.0f}"
-
-
 def join_names(names: list) -> str:
     names = list(names)
     if len(names) <= 2:
