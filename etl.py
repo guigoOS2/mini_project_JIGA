@@ -5,6 +5,12 @@ from utils import CLEAN_FILE, DATA_DIR, RAW_FILE, logger
 # Configuration
 DATE_COLUMNS = ["Order Date", "Ship Date"]
 
+REQUIRED_COLUMNS = [
+    "Order ID", "Order Date", "Ship Date", "Ship Mode", "Segment",
+    "Country/Region", "State/Province", "Region", "Category", "Sub-Category",
+    "Product Name", "Sales", "Quantity", "Discount", "Profit",
+]
+
 
 # Loading
 def load_raw_data() -> pd.DataFrame:
@@ -13,7 +19,17 @@ def load_raw_data() -> pd.DataFrame:
 
     logger.info("Loading raw data: %s", RAW_FILE)
     # Postal Code as text to keep leading zeros and Canadian codes (e.g. M5V)
-    return pd.read_csv(RAW_FILE, dtype={"Postal Code": str})
+    df = pd.read_csv(RAW_FILE, dtype={"Postal Code": str})
+    validate_columns(df)
+    return df
+
+
+def validate_columns(df: pd.DataFrame) -> None:
+    """Stop early, with a clear message, if the raw CSV is missing a required column."""
+    missing = [col for col in REQUIRED_COLUMNS if col not in df.columns]
+    if missing:
+        raise ValueError(f"Raw CSV is missing required column(s): {', '.join(missing)}")
+    logger.info("Schema check passed: all %d required columns found", len(REQUIRED_COLUMNS))
 
 
 # Data quality
