@@ -1,4 +1,4 @@
-# Project D – Retail Analytics
+# Retail Analytics
 
 Group project that analyses the Sample Superstore dataset to find where a multinational retailer loses profit (profit leakage). The code cleans the raw data, compares profit by segment, product, region, date and channel, identifies the strongest loss drivers, and prepares tables and charts for the dashboard and the slides.
 
@@ -75,10 +75,10 @@ Open it from the project root (or use VS Code) and choose *Restart & Run All*. I
 
 | Folder | Content |
 |---|---|
-| `output/graphs and tables/` | Profit by segment: CSV tables and charts |
-| `output/t7/` | Loss drivers: tables (`tbl_*.csv`) and charts (`fig_*.png`) |
-| `output/dashboard/` | One CSV table per dashboard item (`p1_`, `p2_`, `p3_`) |
-| `output/slides/` | Three charts ready for the slides (PNG, 16:9) |
+| `output/profit_by_segment/` | Profit by segment: CSV tables and charts |
+| `output/loss_drivers/` | Loss drivers: tables (`tbl_*.csv`) and charts (`fig_*.png`) |
+| `output/dashboard_tables/` | One CSV table per dashboard item (`p1_`, `p2_`, `p3_`) |
+| `output/slide_charts/` | Three charts ready for the slides (PNG, 16:9) |
 | `output/logs/pipeline.log` | Log of every run, with timestamps and severity levels |
 
 ## Tests
